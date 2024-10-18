@@ -19,9 +19,9 @@ const BarcodeScanner = () => {
               type: "LiveStream",
               target: scannerRef.current, // The DOM element where the camera feed will be rendered
               constraints: {
+                width: 640, // or a higher resolution like 1280
                 height: 400,
                 facingMode: "environment", // Use the back camera
-                torch: true,
               },
             },
             decoder: {
