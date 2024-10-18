@@ -1,4 +1,5 @@
 "use client";
+"use client";
 import React, { useEffect, useRef, useState } from "react";
 import Quagga from "quagga";
 
@@ -7,58 +8,99 @@ const BarcodeScanner = () => {
   const [isScanning, setIsScanning] = useState(false);
   const scannerRef = useRef(null);
   const isScanningRef = useRef(false); // To prevent duplicate scans during the delay
+  const [inputDevices, setInputDevices] = useState([]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [quaggaStarted, setQuaggaStarted] = useState(false); // Flag to track if Quagga is started
+
+  const startQuagga = (deviceId) => {
+    if (scannerRef.current) {
+      Quagga.init(
+        {
+          locate: true,
+          inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: scannerRef.current, // The DOM element where the camera feed will be rendered
+            constraints: {
+              deviceId: deviceId ? { exact: deviceId } : undefined, // Use the selected camera
+              width: 1920, // Increase resolution width
+              height: 1080,
+              facingMode: "environment", // Use the back camera by default
+            },
+          },
+          decoder: {
+            readers: ["upc_reader", "ean_reader"], // Different barcode formats
+          },
+        },
+        function (err) {
+          if (err) {
+            console.error(err);
+            return;
+          }
+          console.log("Initialization finished. Ready to start");
+          Quagga.start();
+          setQuaggaStarted(true); // Set flag to true after starting
+        }
+      );
+
+      Quagga.onDetected((result) => {
+        if (
+          result &&
+          result.codeResult &&
+          result.codeResult.code &&
+          !isScanningRef.current
+        ) {
+          isScanningRef.current = true; // Set the flag to prevent immediate re-scan
+          setBarcodes((prev) => [...prev, result.codeResult.code]);
+          console.log(result.codeResult.code);
+          setTimeout(() => {
+            isScanningRef.current = false; // Reset the flag to allow new scans
+          }, 1500);
+        }
+      });
+    }
+  };
+
+  const stopQuagga = () => {
+    Quagga.stop();
+    setQuaggaStarted(false); // Reset the flag after stopping
+  };
+
+  useEffect(() => {
+    // Get the list of input devices (cameras)
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      const videoDevices = devices.filter(
+        (device) => device.kind === "videoinput"
+      );
+      setInputDevices(videoDevices);
+      if (videoDevices.length > 0) {
+        setSelectedDevice(videoDevices[0].deviceId); // Set the default device
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (isScanning) {
-      if (scannerRef.current) {
-        Quagga.init(
-          {
-            locate: true,
-            inputStream: {
-              name: "Live",
-              type: "LiveStream",
-              target: scannerRef.current, // The DOM element where the camera feed will be rendered
-              constraints: {
-                width: 1920, // Increase resolution width
-                height: 1080,
-                facingMode: "environment", // Use the back camera
-              },
-            },
-            decoder: {
-              readers: ["upc_reader", "ean_reader"], // Different barcode formats
-            },
-          },
-          function (err) {
-            if (err) {
-              console.error(err);
-              return;
-            }
-            console.log("Initialization finished. Ready to start");
-            Quagga.start();
-          }
-        );
-
-        Quagga.onDetected((result) => {
-          if (
-            result &&
-            result.codeResult &&
-            result.codeResult.code &&
-            !isScanningRef.current
-          ) {
-            isScanningRef.current = true; // Set the flag to prevent immediate re-scan
-            setBarcodes((prev) => [...prev, result.codeResult.code]);
-            console.log(result.codeResult.code);
-            setTimeout(() => {
-              isScanningRef.current = false; // Reset the flag to allow new scans
-            }, 1500);
-          }
-        });
-      }
-      return () => {
-        Quagga.stop(); // Cleanup the camera stream when the component is unmounted
-      };
+      startQuagga(selectedDevice);
     }
-  }, [isScanning]);
+
+    return () => {
+      // Only stop Quagga if it was started
+      if (quaggaStarted) {
+        Quagga.stop();
+        setQuaggaStarted(false); // Reset the flag after stopping
+      }
+    };
+  }, [isScanning, selectedDevice]);
+
+  const handleDeviceChange = (event) => {
+    setSelectedDevice(event.target.value);
+    if (isScanning) {
+      Quagga.stop(); // Stop current instance
+      setQuaggaStarted(false);
+      startQuagga(event.target.value); // Start Quagga with new device
+    }
+  };
 
   return (
     <div className="pt-0 md:pt-4">
@@ -94,10 +136,13 @@ const BarcodeScanner = () => {
             </svg>
           </a>
         </div>
+
+        {/* Camera selection */}
+
         <div className="w-full max-w-sm">
           <div
             ref={scannerRef}
-            className=" w-full max-w-sm mx-auto overflow-hidden"
+            className="w-full h-[200px] max-w-sm mx-auto overflow-hidden"
           ></div>
         </div>
         <div className="grid grid-cols-2 p-2 gap-2 border-y">
@@ -109,8 +154,8 @@ const BarcodeScanner = () => {
           </button>
           <button
             onClick={() => {
+              stopQuagga();
               setIsScanning(false);
-              Quagga.stop();
             }}
             className="bg-neutral-200 rounded py-2"
           >
@@ -118,9 +163,24 @@ const BarcodeScanner = () => {
           </button>
         </div>
 
-        <div className="flex items-center justify-between px-2 py-3 border-b">
-          <p className="text-sm text-neutral-700">Current media device:</p>
+        <div className="w-full px-2 py-3 border-b flex justify-between gap-3 items-center whitespace-nowrap">
+          <label htmlFor="camera" className="text-sm font-semibold">
+            Camera:
+          </label>
+          <select
+            id="camera"
+            value={selectedDevice}
+            onChange={handleDeviceChange}
+            className="w-full rounded text-sm"
+          >
+            {inputDevices.map((device) => (
+              <option key={device.deviceId} value={device.deviceId}>
+                {device.label || `Camera ${device.deviceId}`}
+              </option>
+            ))}
+          </select>
         </div>
+
         <div className="p-2 mt-4">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">Scanned contents</h2>
@@ -131,7 +191,6 @@ const BarcodeScanner = () => {
               Clear all
             </button>
           </div>
-
           {barcodes.length === 0 ? (
             <p className="text-sm text-neutral-500 mt-2">
               No barcodes scanned yet
