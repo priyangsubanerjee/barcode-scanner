@@ -19,6 +19,7 @@ const BarcodeScanner = () => {
             constraints: {
               height: 400,
               facingMode: "environment", // Use the back camera
+              torch: true,
             },
           },
           decoder: {
@@ -28,24 +29,6 @@ const BarcodeScanner = () => {
               "ean_8_reader",
               "code_39_reader",
             ], // Different barcode formats
-          },
-          locator: {
-            halfSample: true,
-            patchSize: "medium", // x-small, small, medium, large, x-large
-            debug: {
-              showCanvas: false,
-              showPatches: false,
-              showFoundPatches: false,
-              showSkeleton: false,
-              showLabels: false,
-              showPatchLabels: false,
-              showRemainingPatchLabels: false,
-              boxFromPatches: {
-                showTransformed: false,
-                showTransformedBox: false,
-                showBB: false,
-              },
-            },
           },
         },
         function (err) {
