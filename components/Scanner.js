@@ -97,7 +97,7 @@ const BarcodeScanner = () => {
         <div className="w-full max-w-sm">
           <div
             ref={scannerRef}
-            className="w-full overflow-hidden max-w-sm mx-auto"
+            className=" w-full max-w-sm mx-auto overflow-hidden"
           ></div>
         </div>
         <div className="grid grid-cols-2 p-2 gap-2 border-y">
