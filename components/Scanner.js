@@ -94,10 +94,10 @@ const BarcodeScanner = () => {
             </svg>
           </a>
         </div>
-        <div className="h-[200px] w-full max-w-sm">
+        <div className="w-full max-w-sm">
           <div
             ref={scannerRef}
-            className="h-[200px] w-full overflow-hidden max-w-sm mx-auto"
+            className="w-full overflow-hidden max-w-sm mx-auto"
           ></div>
         </div>
         <div className="grid grid-cols-2 p-2 gap-2 border-y">
@@ -116,6 +116,10 @@ const BarcodeScanner = () => {
           >
             Stop
           </button>
+        </div>
+
+        <div className="flex items-center justify-between px-2 py-3 border-b">
+          <p className="text-sm text-neutral-700">Current media device:</p>
         </div>
         <div className="p-2 mt-4">
           <div className="flex items-center justify-between">
