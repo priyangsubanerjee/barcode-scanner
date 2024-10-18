@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Barcode Scanner using QuaggaJS
+
+This project is a barcode scanner built with **Next.js** and **QuaggaJS**, allowing users to scan barcodes through their device camera. The app supports scanning multiple barcode types and can be extended for various use cases such as inventory management or billing systems.
+
+## Features
+
+- **Barcode Scanning**: Real-time barcode detection using the device's camera.
+- **Multi-format support**: Supports formats like `upc`, `code_128`, `EAN`, `EAN-8`, `code_39`, and more.
+- **Mobile-friendly**: Works on most modern devices with back cameras.
+
+## Tech Stack
+
+- **Next.js**: React-based framework for server-side rendering and static site generation.
+- **QuaggaJS**: Barcode scanner library used for decoding barcodes from camera streams.
+- **React**: Component-based UI structure.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Before running the project, make sure you have the following installed:
+
+- [Node.js](https://nodejs.org/) (version 14.x or higher)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+
+### Installation
 
 ```bash
+git clone https://github.com/priyangsubanerjee/barcode-scanner
+cd barcode-scanner
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
