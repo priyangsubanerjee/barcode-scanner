@@ -1,6 +1,6 @@
 # Barcode Scanner using QuaggaJS
 
-This project is a barcode scanner built with **Next.js** and **QuaggaJS**, allowing users to scan barcodes through their device camera. The app supports scanning multiple barcode types and can be extended for various use cases such as inventory management or billing systems.
+This project is a barcode scanner built with **Next.js** and **QuaggaJS**, allowing users to scan barcodes through their device camera. The app supports scanning multiple barcode types and can be extended for various use cases such as inventory management or billing systems. [Click here to view live](https://quagga-barcode-scanner.vercel.app/)
 
 ## Features
 
