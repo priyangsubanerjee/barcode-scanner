@@ -71,14 +71,12 @@ const BarcodeScanner = () => {
   };
 
   useEffect(() => {
-    // Get the list of input devices (cameras)
     navigator.mediaDevices.enumerateDevices().then((devices) => {
       const videoDevices = devices.filter(
         (device) => device.kind === "videoinput"
       );
       setInputDevices(videoDevices);
       if (videoDevices.length > 0) {
-        // set the last device as default
         setSelectedDevice(videoDevices[videoDevices.length - 1].deviceId);
       }
     });
