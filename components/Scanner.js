@@ -52,7 +52,9 @@ const BarcodeScanner = () => {
         ) {
           isScanningRef.current = true; // Set the flag to prevent immediate re-scan
           setBarcodes((prev) => [...prev, result.codeResult.code]);
-          console.log(result.codeResult.code);
+          let audioElem = document.getElementById("audio");
+          audioElem.volume = 0.5;
+          audioElem.play();
           setTimeout(() => {
             isScanningRef.current = false; // Reset the flag to allow new scans
           }, 1500);
@@ -62,8 +64,10 @@ const BarcodeScanner = () => {
   };
 
   const stopQuagga = () => {
-    Quagga.stop();
-    setQuaggaStarted(false); // Reset the flag after stopping
+    if (quaggaStarted) {
+      Quagga.stop();
+      setQuaggaStarted(false); // Reset the flag after stopping
+    }
   };
 
   useEffect(() => {
@@ -222,7 +226,7 @@ const BarcodeScanner = () => {
           <div className="grid grid-cols-2 p-3 gap-2 border-y">
             <button
               onClick={() => setIsScanning(true)}
-              className="bg-neutral-200 rounded py-2"
+              className="bg-neutral-200 active:bg-neutral-300 rounded py-2"
             >
               Scan
             </button>
@@ -231,7 +235,7 @@ const BarcodeScanner = () => {
                 stopQuagga();
                 setIsScanning(false);
               }}
-              className="bg-neutral-200 rounded py-2"
+              className="bg-neutral-200 active:bg-neutral-300 rounded py-2"
             >
               Stop
             </button>
@@ -244,7 +248,7 @@ const BarcodeScanner = () => {
               id="camera"
               value={selectedDevice}
               onChange={handleDeviceChange}
-              className="w-full rounded text-sm"
+              className="w-full rounded text-sm appearance-none bg-white outline-none cursor-pointer"
             >
               {inputDevices.map((device) => (
                 <option key={device.deviceId} value={device.deviceId}>
@@ -288,7 +292,7 @@ const BarcodeScanner = () => {
         </div>
       </div>
 
-      <div className="fixed inset-x-0 top-0 md:top-2 px-3 h-12 border-b md:border-t bg-white border-x md:max-w-sm mx-auto flex items-center">
+      <div className="fixed inset-x-0 top-0 md:top-2 px-3 h-12 border-b md:border-b-transparent md:border-t bg-white border-x md:max-w-sm mx-auto flex items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width={28}
@@ -319,6 +323,8 @@ const BarcodeScanner = () => {
           </svg>
         </a>
       </div>
+
+      <audio id="audio" src="/scanned.mov"></audio>
     </div>
   );
 };
