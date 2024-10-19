@@ -5,3 +5,7 @@
 .drawingBuffer {
   display: none;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
