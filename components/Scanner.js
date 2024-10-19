@@ -277,6 +277,14 @@ const BarcodeScanner = () => {
               </ul>
             )}
           </div>
+          <div className="max-w-sm mx-auto flex items-center justify-center mt-32 text-neutral-700">
+            <p className="text-xs">
+              Developed by{" "}
+              <a className="hover:underline" href="https://priyangsu.dev">
+                @priyangsubanerjee
+              </a>
+            </p>
+          </div>
         </div>
       </div>
 
