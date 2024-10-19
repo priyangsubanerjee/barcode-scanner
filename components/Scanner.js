@@ -78,7 +78,8 @@ const BarcodeScanner = () => {
       );
       setInputDevices(videoDevices);
       if (videoDevices.length > 0) {
-        setSelectedDevice(videoDevices[0].deviceId); // Set the default device
+        // set the last device as default
+        setSelectedDevice(videoDevices[videoDevices.length - 1].deviceId);
       }
     });
   }, []);
