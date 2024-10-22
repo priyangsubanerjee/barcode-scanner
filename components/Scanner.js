@@ -29,7 +29,7 @@ const BarcodeScanner = () => {
             },
           },
           locator: {
-            patchSize: "medium", // 'small', 'medium', 'large' based on performance needs
+            patchSize: " x-small", // 'small', 'medium', 'large' based on performance needs
           },
           decoder: {
             readers: ["code_128_reader", "ean_reader", "ean_8_reader"], // limit to relevant barcode formats
