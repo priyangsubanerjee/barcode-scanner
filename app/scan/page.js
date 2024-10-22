@@ -9,6 +9,17 @@ const ZXingScanner = () => {
   const videoRef = useRef(null);
   const codeReader = useRef(new BrowserMultiFormatReader());
 
+  // Check for camera permissions and available devices
+  const checkPermissions = async () => {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      try {
+        await navigator.mediaDevices.getUserMedia({ video: true });
+      } catch (err) {
+        console.error("Camera permission denied:", err);
+      }
+    }
+  };
+
   useEffect(() => {
     // Fetch available video input devices when the component mounts
     codeReader.current
@@ -21,6 +32,8 @@ const ZXingScanner = () => {
       })
       .catch((err) => console.error(err));
 
+    checkPermissions(); // Ensure permissions on mount
+
     return () => {
       // Clean up the camera on component unmount
       codeReader.current.reset();
@@ -29,28 +42,41 @@ const ZXingScanner = () => {
 
   const startScanner = () => {
     if (selectedDeviceId && videoRef.current) {
-      codeReader.current.decodeFromVideoDevice(
-        selectedDeviceId,
-        videoRef.current,
-        (result, err) => {
-          if (result) {
-            let audioElem = document.getElementById("audio");
-            audioElem.volume = 0.5;
-            audioElem.play();
-            setResult(result.text);
-          }
-          if (err && !(err instanceof NotFoundException)) {
-            console.error(err);
-            setResult(err.message);
-          }
-        }
-      );
+      // Explicitly request the camera stream for mobile compatibility
+      navigator.mediaDevices
+        .getUserMedia({ video: { deviceId: selectedDeviceId } })
+        .then((stream) => {
+          videoRef.current.srcObject = stream; // Set the video stream to the video element
+          codeReader.current.decodeFromVideoDevice(
+            selectedDeviceId,
+            videoRef.current,
+            (result, err) => {
+              if (result) {
+                let audioElem = document.getElementById("audio");
+                audioElem.volume = 0.5;
+                audioElem.play();
+                setResult(result.text);
+              }
+              if (err && !(err instanceof NotFoundException)) {
+                console.error(err);
+                setResult(err.message);
+              }
+            }
+          );
+        })
+        .catch((err) => console.error("Error accessing camera:", err));
     }
   };
 
   const resetScanner = () => {
     codeReader.current.reset();
     setResult("");
+    if (videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop()); // Stop all video tracks
+      videoRef.current.srcObject = null; // Clear the video source
+    }
   };
 
   return (
@@ -79,9 +105,8 @@ const ZXingScanner = () => {
         <div>
           <video
             ref={videoRef}
-            width="300"
-            height="200"
-            style={{ border: "1px solid gray" }}
+            style={{ width: "100%", height: "auto", border: "1px solid gray" }}
+            playsInline // Ensure compatibility with mobile devices
           ></video>
         </div>
 
