@@ -68,7 +68,7 @@ const ZXingScanner = () => {
         </p>
 
         <div>
-          <button className="button" onClick={startScanner}>
+          <button className="h-12 bg-red-100" onClick={startScanner}>
             Start
           </button>
           <button className="button" onClick={resetScanner}>
