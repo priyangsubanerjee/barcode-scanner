@@ -28,9 +28,14 @@ const BarcodeScanner = () => {
               facingMode: "environment", // Use the back camera by default
             },
           },
-          decoder: {
-            readers: ["upc_reader", "ean_reader"], // Different barcode formats
+          locator: {
+            patchSize: "medium", // 'small', 'medium', 'large' based on performance needs
+            halfSample: true, // improves performance by half-sampling
           },
+          decoder: {
+            readers: ["code_128_reader", "ean_reader", "ean_8_reader"], // limit to relevant barcode formats
+          },
+          locate: true, // attempt to locate barcode in the image
         },
         function (err) {
           if (err) {
