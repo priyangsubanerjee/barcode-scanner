@@ -17,6 +17,13 @@ const BarcodeScanner = () => {
       Quagga.init(
         {
           locate: true,
+          area: {
+            // defines rectangle of the detection/localization area
+            top: "30%", // top offset
+            right: "30%", // right offset
+            left: "30%", // left offset
+            bottom: "30%", // bottom offset
+          },
           inputStream: {
             name: "Live",
             type: "LiveStream",
@@ -26,6 +33,7 @@ const BarcodeScanner = () => {
               width: 1920, // Increase resolution width
               height: 1080,
               facingMode: "environment", // Use the back camera by default
+              focusingMode: "", // Use the front camera by default
             },
           },
           locator: {
